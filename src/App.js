@@ -1,70 +1,57 @@
-import React ,{useState} from 'react';
+import React, { useState } from "react";
 
-import MoviesList from './components/MoviesList';
-import './App.css';
+import MoviesList from "./components/MoviesList";
+import "./App.css";
 
 function App() {
-  const [movies,setMovies]=useState([])
+  const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(null);
 
-  async function fetchMoviesHandler()   // making function async function
-  {
-    let res=await fetch('https://swapi.dev/api/films')  // the response from fetching server will store in res here 
-    try{
-      let fetchMovies=await res.json();  //.json() also async function, it will convert json fromat into readable js , but it is also a callback (i.e) promise therefore using await with it also
+  async function fetchMoviesHandler() {
+    setIsLoading(true);
+    let res = await fetch("https://swapi.dev/api/films"); 
+    try {
+      let fetchMovies = await res.json(); 
 
-      let transformedMovies=fetchMovies.results.map((data)=>
-      {
-        return({
-          id: data.episode_id,   // here we are giving values to the id, in server id is not like id: 1, but episode_id:1, therefor we are assign that values to understand by movies.js component
+      
+
+      let transformedMovies = fetchMovies.results.map((data) => {
+        return {
+          id: data.episode_id, 
           title: data.title,
           openingText: data.opening_crawl,
           releaseDate: data.release_date,
-
-        })
-      })
-
-      setMovies(transformedMovies)
-
-
+        };
+      });
+      setIsLoading(false);
+      setMovies(transformedMovies);
+    } catch (err) {
+      console.log(err);
     }
-    catch (err)
-    {
-      console.log(err)
-    }
-
-
-    // fetch('https://swapi.dev/api/films')
-    // .then((response)=>
-    // {
-    //   return response.json()
-    // })
-    // .then((data)=>
-    // {
-    //   console.log(data.results)
-
-    //   let transformedMovies=data.results.map((data)=>
-    //   {
-    //     return({
-    //       id: data.episode_id,
-    //       title: data.title,
-    //       openingText: data.opening_crawl,
-    //       releaseDate: data.release_date,
-
-    //     })
-    //   })
-
-    //   setMovies(transformedMovies)
-
-    // })
   }
+
+
+  // let loadingMessage = [{
+  //   id: "loading",
+  //   title: "Your data is Loading..."
+  // }];
+
+  // useEffect(()=>
+  // {
+  //   if(isLoading)
+  //   {
+  //     setMovies(loadingMessage)
+  //   }
+  // },[isLoading])
 
   return (
     <React.Fragment>
       <section>
-        <button onClick={fetchMoviesHandler} >Fetch Movies</button>
+        <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
       <section>
-        <MoviesList movies={movies} />
+        {! isLoading && <MoviesList movies={movies} />}
+        {isLoading && <p>Loading...</p>}
       </section>
     </React.Fragment>
   );
