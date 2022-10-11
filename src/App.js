@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState,useCallback } from "react";
 
 import MoviesList from "./components/MoviesList";
 import "./App.css";
@@ -8,18 +8,24 @@ function App() {
   const [isLoading, setIsLoading] = useState(null);
   const [error,setError]=useState(null)
 
-  async function fetchMoviesHandler() {
+  
+
+  const  fetchMoviesHandler=useCallback(async() =>{
     setIsLoading(true);
     setError(null)
-    let res = await fetch("https://swapi.dev/api/film"); 
+    let res = await fetch("https://swapi.dev/api/films"); 
     try {
      
+      console.log(res)
+
       if(!res.ok)
       {
         throw new Error('Something Went Wrong...Retrying')
       }
 
       let fetchMovies = await res.json(); 
+
+      console.log(fetchMovies)
 
       let transformedMovies = fetchMovies.results.map((data) => {
         return {
@@ -29,16 +35,25 @@ function App() {
           releaseDate: data.release_date,
         };
       });
+
+      console.log(transformedMovies)
       setMovies(transformedMovies);
     } catch (err) {
       console.log(err);
       setError(err.message)
     }
     setIsLoading(false);
-  }
+  },[])
 
 
- 
+  useEffect(()=>
+  {
+    fetchMoviesHandler()
+  },[fetchMoviesHandler])
+
+  //here we are using useEffect( ), so that when page load initially fetchMoviesHandler function get called and print movies
+  // fetchMoviesHandler pass as dependency because if it may change in future due to external state then useEffect will execute again
+  // Also we wrap this function inside callBack() because function is an object i.e refrence data type and js take it differnt not same therefor we use usecallback() so that react will not re-read it again, it will get re readed if its value change 
 
 
   let content=<p>No Movies</p>
