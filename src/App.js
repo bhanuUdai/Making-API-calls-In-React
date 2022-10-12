@@ -3,22 +3,50 @@ import Form from "./components/Form";
 import MoviesList from "./components/MoviesList";
 import "./App.css";
 
-function App() {
+function App(props) {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(null);
   const [error,setError]=useState(null)
 
   
-const moviesHandler=(movie)=>
+const moviesHandler=async(movie)=>
 {
-  console.log(movie)
+ const res=await fetch('https://react-http-90afb-default-rtdb.firebaseio.com/movies.json',{
+    method:'post',
+    body:JSON.stringify(movie),
+    headers:{
+      'Context-Type':'application/json'
+    }
+  })
+
+  let content=await res.json()
+  console.log(content)
+  fetchMoviesHandler()
 }
+
+
+  const deleteMovieHandler=async(id)=>
+  {
+    console.log(id)
+
+    let res= await fetch(`https://react-http-90afb-default-rtdb.firebaseio.com/movies/${id}.json`,{
+      method:'DELETE',
+      headers:{
+        'Context-Type':'application/json'
+      }
+    })
+
+    let deleteRes=await res.json()
+
+    console.log(deleteRes)
+    fetchMoviesHandler()
+  }
 
 
   const  fetchMoviesHandler=useCallback(async() =>{
     setIsLoading(true);
     setError(null)
-    let res = await fetch("https://swapi.dev/api/films"); 
+    let res = await fetch("https://react-http-90afb-default-rtdb.firebaseio.com/movies.json"); 
     try {
      
       console.log(res)
@@ -32,17 +60,36 @@ const moviesHandler=(movie)=>
 
       console.log(fetchMovies)
 
-      let transformedMovies = fetchMovies.results.map((data) => {
-        return {
-          id: data.episode_id, 
-          title: data.title,
-          openingText: data.opening_crawl,
-          releaseDate: data.release_date,
-        };
-      });
+//here we are getting fetchMovies as object like: fetchMovies={a:{b:1,c:2,d:3}}
+//i.e object with key "a", and this key contain value which is object {b:1,c:2,d:3}
 
-      console.log(transformedMovies)
-      setMovies(transformedMovies);
+
+
+      let addedMovies=[];
+
+      for(const key in fetchMovies)
+      {
+        addedMovies.push({
+          id:key,
+          title:fetchMovies[key].title,
+          openingText:fetchMovies[key].openingText,
+          releaseDate:fetchMovies[key].releaseDate
+        })
+      }
+
+
+
+      // let transformedMovies = fetchMovies.results.map((data) => {
+      //   return {
+      //     id: data.episode_id, 
+      //     title: data.title,
+      //     openingText: data.opening_crawl,
+      //     releaseDate: data.release_date,
+      //   };
+      // });
+
+      // console.log(transformedMovies)
+      setMovies(addedMovies);
     } catch (err) {
       console.log(err);
       setError(err.message)
@@ -71,7 +118,7 @@ const moviesHandler=(movie)=>
 
   if(!isLoading && movies.length>0 )
   {
-    content=  <MoviesList movies={movies} />
+    content=  <MoviesList movies={movies} deleteId={deleteMovieHandler} />
   }
 
   if(!isLoading && movies.length===0)

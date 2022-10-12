@@ -24,7 +24,6 @@ const Form=(prop)=>
 
 
     let obj={
-          id:Math.random(),
           title: newTitle,
           openingText:opnText,
           releaseDate:date
@@ -34,16 +33,19 @@ const Form=(prop)=>
     {
         event.preventDefault()
         prop.newMovies(obj)
+        setTitle('')
+        setOpnText('')
+        setDate('')
     }
 
     return(<React.Fragment>
         <form className={classes.submittingForm}>
         <label htmlFor="title">Title</label>
-        <input onChange={titleHandler} type='text'  id="title"></input>
+        <input value={newTitle} onChange={titleHandler} type='text'  id="title"></input>
         <label htmlFor="openingText">Opening Text</label>
-        <input onChange={opnTexthandler} type='text' id="openingText"></input>
+        <input value={opnText} onChange={opnTexthandler} type='text' id="openingText"></input>
         <label htmlFor="date">Release Date</label>
-        <input onChange={dateHandler} type='date' id="date"></input>
+        <input value={date} onChange={dateHandler} type='date' id="date"></input>
         <div>
         <button onClick={submitHandler} className={classes.submitButton}>Submit</button>
         </div>
