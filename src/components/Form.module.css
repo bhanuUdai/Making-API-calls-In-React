@@ -1,0 +1,24 @@
+.submittingForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 78%;
+    background: white;
+    justify-content: space-around;
+    margin: 1px auto;
+    border-radius: 12px;
+    max-width: 40rem;
+}
+
+
+.submittingForm label,
+.submittingForm  input{
+    padding:10px;
+    width:95%
+}
+
+
+.submitButton
+{
+    margin:10px;
+}

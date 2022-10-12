@@ -1,5 +1,5 @@
 import React, { useEffect, useState,useCallback } from "react";
-
+import Form from "./components/Form";
 import MoviesList from "./components/MoviesList";
 import "./App.css";
 
@@ -9,6 +9,11 @@ function App() {
   const [error,setError]=useState(null)
 
   
+const moviesHandler=(movie)=>
+{
+  console.log(movie)
+}
+
 
   const  fetchMoviesHandler=useCallback(async() =>{
     setIsLoading(true);
@@ -94,7 +99,9 @@ function App() {
 
   return (
     <React.Fragment>
+       <Form newMovies={moviesHandler}/>
       <section>
+       
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
       <section>
